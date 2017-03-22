@@ -1,4 +1,4 @@
-<!--
+<?php
 /**
  * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,17 +13,26 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
--->
+namespace Amazon\Payment\Block\Cart;
 
-<!--@subject Please contact us about your order @-->
-{{template config_path="design/email/header_template"}}
+//class Sidebar extends \Magento\Checkout\Block\Cart\Sidebar
+class Sidebar extends \Magento\Framework\View\Element\AbstractBlock implements BlockInterface
+{
+    public function toHtml()
+    {
+        parent::toHtml();
+        //die(__METHOD__);
+        //$block = parent::toHtml();
+        // $block->setData("componentDisabled", false);
 
-<p>{{trans "Valued customer"}},</p>
-<br>
-<p>
-    {{trans "Unfortunately Amazon Payments declined the payment for your order in our online shop %storeName. Please contact us." storeName=$storeName}}.
-</p>
+        /*
+        //$block->getChildBlock("minicart");
+        //die(get_class($block));
+        /*
 
-<p>{{trans "Kind regards"}},</p>
-
-{{template config_path="design/email/footer_template"}}
+        if($i==1){
+            parent::toHtml();
+        }*/
+        //return $block;
+    }
+}
