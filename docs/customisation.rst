@@ -1,8 +1,8 @@
 Frontend Customisation
 ========================
 
-Q: I'd like to add a `Pay with Amazon` or `Login with Amazon` button elsewhere on my site
--------------------------
+Q: I'd like to add a `Amazon Pay` or `Login with Amazon` button elsewhere on my site
+------------------------------------------------------------------------------------
 
 If you are wanting to add one of these buttons to a new location on your site you need to update the **XML** for the page you want to add it to.
 
@@ -24,9 +24,9 @@ In your theme directory, you would create:
 Here you are referencing the block **category.products** and then simply inserting the `Login with Amazon` button template into this block to be positioned after the block **category.products.list**
 
 
-Pay with Amazon
+Amazon Pay
 
-If you wish to add a `Pay with Amazon` button elsewhere in your store, you can follow the same process above, using a different template, like so.
+If you wish to add a `Amazon Pay` button elsewhere in your store, you can follow the same process above, using a different template, like so.
 
 
 .. code-block:: xml
@@ -37,7 +37,7 @@ If you wish to add a `Pay with Amazon` button elsewhere in your store, you can f
 You can position and target which block the button appears in as with the `Login with Amazon` button. If you need more information on how to position and add new blocks into Magento 2 please see the `Magento 2 documentation <http://devdocs.magento.com/guides/v2.1/frontend-dev-guide/layouts/layout-overview.html>`_
 
 Q: I'd like to customise the authorisation decline e-mail
--------------------------
+---------------------------------------------------------
 
 You can easily customise the authorisation decline e-mails by creating a version in your own theme. To do this you need to copy the current template into your own theme:
 

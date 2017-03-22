@@ -21,12 +21,12 @@
 <p>{{trans "Valued customer"}},</p>
 <br>
 <p>
-    {{trans "Thank you very much for your order at %storeName" storeName=$storeName}}.
+    {{trans "Thank you very much for your order at %storeName" storeName=$store.getFrontendName()}}.
     {{trans "Amazon Payments was not able to process your payment"}}.
 </p>
 <p>
 {{trans 'Please go to <a href="%amazonAccountUrl">%amazonAccountUrl</a> and update the payment information for your order' amazonAccountUrl=$amazonAccountUrl |raw}}.
-{{trans "Afterwards we will automatically request payment again from Amazon Payments and you will receive a confirmation email"}}.
+{{trans "Afterwards we will automatically request payment again from Amazon Pay and you will receive a confirmation email"}}.
 </p>
 
 <p>{{trans "Kind regards"}},</p>
