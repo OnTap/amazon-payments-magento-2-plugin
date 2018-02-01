@@ -25,6 +25,9 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Url\DecoderInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 
 class Redirect extends BaseRedirect
 {
@@ -38,7 +41,26 @@ class Redirect extends BaseRedirect
      */
     protected $customerSession;
 
+    protected $cookieManager;
+
+    protected $cookieMetadataFactory;
+
+    protected $sessionManager;
+
+    /**
+     * Redirect constructor.
+     * @param RequestInterface $request
+     * @param CustomerSession $customerSession
+     * @param ScopeConfigInterface $scopeConfig
+     * @param StoreManagerInterface $storeManager
+     * @param UrlInterface $url
+     * @param DecoderInterface $urlDecoder
+     * @param CustomerUrl $customerUrl
+     * @param ResultFactory $resultFactory
+     * @param CheckoutSession $checkoutSession
+     */
     public function __construct(
+        CookieManagerInterface $cookieManager,
         RequestInterface $request,
         CustomerSession $customerSession,
         ScopeConfigInterface $scopeConfig,
@@ -47,7 +69,9 @@ class Redirect extends BaseRedirect
         DecoderInterface $urlDecoder,
         CustomerUrl $customerUrl,
         ResultFactory $resultFactory,
-        CheckoutSession $checkoutSession
+        CheckoutSession $checkoutSession,
+        SessionManagerInterface $sessionManager,
+        CookieMetadataFactory $cookieMetadataFactory
     ) {
         parent::__construct(
             $request,
@@ -62,24 +86,45 @@ class Redirect extends BaseRedirect
 
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
+        $this->cookieManager = $cookieManager;
+        $this->cookieMetadataFactory = $cookieMetadataFactory;
+        $this->sessionManager = $sessionManager;
     }
 
     public function getRedirect()
     {
-        $this->updateLastCustomerId();
+        $cookieRedirect = $this->cookieManager->getCookie(
+            \Amazon\Payment\Helper\Data::REDIRECT_COOKIE_NAME
+        );
+        $this->deleteCookie(\Amazon\Payment\Helper\Data::REDIRECT_COOKIE_NAME);
+
+        $this->updateLastCustomerId('amazon_redirect');
 
         $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         $afterAmazonAuthUrl = $this->customerUrl->getAccountUrl();
 
-        if ($this->checkoutSession->getQuote() && (int)$this->checkoutSession->getQuote()->getItemsCount() > 0) {
+        if ($cookieRedirect) {
+            $afterAmazonAuthUrl = $cookieRedirect;
+        } else if ($this->checkoutSession->getQuote() && (int)$this->checkoutSession->getQuote()->getItemsCount() > 0) {
             $afterAmazonAuthUrl = $this->url->getUrl('checkout');
-        } elseif ($this->customerSession->getAfterAmazonAuthUrl()) {
+        } else {
             $afterAmazonAuthUrl = $this->customerSession->getAfterAmazonAuthUrl();
         }
 
         $result->setUrl($afterAmazonAuthUrl);
 
         return $result;
+    }
+
+    public function deleteCookie($name)
+    {
+        $this->cookieManager->deleteCookie(
+            $name,
+            $this->cookieMetadataFactory
+                ->createCookieMetadata()
+                ->setPath($this->sessionManager->getCookiePath())
+                ->setDomain($this->sessionManager->getCookieDomain())
+        );
     }
 }

@@ -23,6 +23,8 @@ class Data extends AbstractHelper
 {
     const MODULE_CODE = 'Amazon_Payment';
 
+    const REDIRECT_COOKIE_NAME = 'amazon_redirect';
+
     /**
      * @var ModuleListInterface
      */

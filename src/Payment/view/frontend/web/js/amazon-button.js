@@ -36,7 +36,6 @@ define([
             redirectUrl: null,
             loginPostUrl: null
         },
-
         _create: function () {
             _this = this;
             $button = this.element;
@@ -55,6 +54,9 @@ define([
                 _this.options.buttonSize = amazonPaymentConfig.getValue('buttonSize');
                 _this.options.redirectUrl = amazonPaymentConfig.getValue('redirectUrl');
                 _this.options.loginPostUrl = amazonPaymentConfig.getValue('loginPostUrl');
+                _this.options.cookieDomain = amazonPaymentConfig.getValue('cookieDomain');
+                _this.options.cookieLifetime = amazonPaymentConfig.getValue('cookieLifetime');
+                _this.options.cookiePath = amazonPaymentConfig.getValue('cookiePath');
                 _this.options.loginScope = amazonPaymentConfig.getValue('loginScope');
                 _this.options.buttonLanguage = amazonPaymentConfig.getValue('displayLanguage');
             }
@@ -95,6 +97,9 @@ define([
          * @public
          */
         usePopUp: function () {
+            if (!$('body').hasClass('catalog-product-view')) {
+                document.cookie = "amazon_redirect=; Path=" + _this.options.cookiePath + ";";
+            }
             return ((window.location.protocol === 'https:' && !$('body').hasClass('catalog-product-view')) && !_this._touchSupported());
         },
         /**
@@ -103,7 +108,9 @@ define([
          */
         _renderAmazonButton: function () {
             var authRequest;
-
+            if (_this.options.redirectCookieUrl != undefined) {
+                _this._buildCookie();
+            }
             OffAmazonPayments.Button($button.attr('id'), _this.options.merchantId, {
                 type: _this.options.buttonType,
                 color: _this.options.buttonColor,
@@ -114,6 +121,14 @@ define([
                     authRequest = amazon.Login.authorize(_this._getLoginOptions(), _this._popupCallback());
                 }
             });
+        },
+        _buildCookie: function () {
+            if (_this.options.redirectCookieUrl != undefined) {
+                var date = new Date();
+                date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
+                var expires = "; expires=" + date.toGMTString();
+                document.cookie = _this.options.cookieName + "=" + _this.options.redirectCookieUrl + expires + "; path=" + _this.options.cookiePath;
+            }
         },
         /**
          * Build login options

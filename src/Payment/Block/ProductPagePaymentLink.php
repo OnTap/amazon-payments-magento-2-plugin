@@ -21,6 +21,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\Session\SessionManagerInterface;
 
 class ProductPagePaymentLink extends PaymentLink
 {
@@ -35,13 +36,22 @@ class ProductPagePaymentLink extends PaymentLink
     protected $registry;
 
     /**
-     * @param Context           $context
-     * @param Data              $coreHelper
+     * @var SessionManagerInterface
+     */
+    protected $sessionManager;
+
+
+    /**
+     * ProductPagePaymentLink constructor.
+     * @param SessionManagerInterface $sessionManager
+     * @param Context $context
+     * @param Data $coreHelper
      * @param CategoryExclusion $categoryExclusionHelper
-     * @param Registry          $registry
-     * @param array             $data
+     * @param Registry $registry
+     * @param array $data
      */
     public function __construct(
+        SessionManagerInterface $sessionManager,
         Context $context,
         Data $coreHelper,
         CategoryExclusion $categoryExclusionHelper,
@@ -50,8 +60,56 @@ class ProductPagePaymentLink extends PaymentLink
     ) {
         parent::__construct($context, $coreHelper, $categoryExclusionHelper, $data);
         $this->registry = $registry;
+        $this->sessionManager = $sessionManager;
     }
 
+    /**
+     * @return string
+     */
+    public function getAccountRedirectUrl()
+    {
+        return $this->getUrl('customer/account');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountCheckoutUrl()
+    {
+        return $this->getUrl('checkout');
+    }
+
+    /**
+     * @return int
+     */
+    public function getCookieLifeTime()
+    {
+        return $this->sessionManager->getCookieLifetime();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCookieDomain()
+    {
+        $this->sessionManager->getCookieDomain();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCookiePath()
+    {
+        return $this->sessionManager->getCookiePath();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCookieName()
+    {
+        return \Amazon\Payment\Helper\Data::REDIRECT_COOKIE_NAME;
+    }
     /**
      * {@inheritdoc}
      */
