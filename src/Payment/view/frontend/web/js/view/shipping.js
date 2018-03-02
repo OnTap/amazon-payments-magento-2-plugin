@@ -35,6 +35,9 @@ define(
                 amazonStorage.isAmazonAccountLoggedIn.subscribe(function (value) {
                     this.isNewAddressAdded(value);
                 }, this);
+                if (amazonStorage.isAmazonAccountLoggedIn()) {
+                    this.isFormInline(true);
+                }
                 return this;
             },
             validateGuestEmail: function () {
